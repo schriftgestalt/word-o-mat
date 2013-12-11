@@ -35,6 +35,9 @@ def setup_binding_Control(self, Object, KeyPath, options = objc.nil):
 	self._nsObject.bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
 EditText.binding = setup_binding_Control
 ComboBox.binding = setup_binding_Control
+def setup_binding_PopUpButton(self, Object, KeyPath, options = objc.nil):
+	self._nsObject.bind_toObject_withKeyPath_options_("selectedIndex", Object, "values."+KeyPath, options)
+PopUpButton.binding = setup_binding_PopUpButton
 warned = False
 
 class wordChecker(object):
@@ -121,14 +124,11 @@ class WordomatWindow:
 	def __init__(self):
 		# set defaults
 		self.requiredGroups = [[], [], []]
-		#self.limitToCharset = False
-		#self.banRepetitions = False
-		#self.randomize = True
 		self.outputWords = []
 		thisBundle = NSBundle.bundleWithIdentifier_("com.NinaStoessinger.WordOMat")
-		fileName	  = str(thisBundle.pathForResource_ofType_("ukacd", "txt"))
+		fileName = str(thisBundle.pathForResource_ofType_("ukacd", "txt"))
 		
-		contentLimit  = '*****' # If word list file contains a header (e.g. copyright notice), start looking for content after this delimiter
+		contentLimit = '*****' # If word list file contains a header (e.g. copyright notice), start looking for content after this delimiter
 		
 		fo = open(fileName)
 		lines = fo.read()
@@ -163,13 +163,13 @@ class WordomatWindow:
 		Defaults.registerDefaults_(defaultpreferences)
 		
 		# dialog window
-		self.w = FloatingWindow((325, 488), 'word-o-mat')
+		self.w = FloatingWindow((325, 518), 'word-o-mat')
 		interval = 28
 		padding = 10
 		boxPadding = 3
 		y = 10
 		
-		self.w.basicsBox = Box((padding, y, -padding, interval*2.75))
+		self.w.basicsBox = Box((padding, y, -padding, interval*3.85))
 		self.w.basicsBox.wcText = TextBox((boxPadding, 5, 170, 22), 'Make this many words:')
 		self.w.basicsBox.lenTextOne = TextBox((boxPadding, 5 + interval * 1.25, 90, 22), 'Word length:')
 		self.w.basicsBox.lenTextTwo = TextBox((141, 5 + interval * 1.25, 20, 22), 'to')
@@ -180,7 +180,10 @@ class WordomatWindow:
 		self.w.basicsBox.minLength.binding(DefaultsController, 'com.ninastoessinger.minLength')
 		self.w.basicsBox.maxLength = EditText((165, 3 + interval * 1.25, 40, 22), '')
 		self.w.basicsBox.maxLength.binding(DefaultsController, 'com.ninastoessinger.maxLength')
-		y += interval*3.125
+		self.w.basicsBox.caseLabel = TextBox((boxPadding, 3 + interval * 2.5, 45, 22), 'Case:') 
+		self.w.basicsBox.case = PopUpButton((50, 2 + interval * 2.5, -10, 20), ["leave as is", "all lowercase", "Capitalize", "ALL CAPS"])
+		self.w.basicsBox.case.binding(DefaultsController, 'com.ninastoessinger.case')
+		y += interval*4.2
 
 		self.w.reqBox = Box((padding, y, -padding, interval*8.9))
 		labelY = [5, 5 + interval*2.25, 5 + interval*6.375]
@@ -203,38 +206,36 @@ class WordomatWindow:
 			attrName = attrNameTemplate % j
 			setattr(self.w.reqBox, attrName, ComboBox((boxPadding, y2-3, -boxPadding, 22), optionsList))
 			Combo = getattr(self.w.reqBox, attrName)
-			
 			Combo.binding(DefaultsController, 'com.ninastoessinger.'+attrName)
+		
 		y += interval*9.25
-		  
+		
 		self.w.optionsBox = Box((padding, y, -padding, interval*3.125))
-		chkNameTemplate = "checkbox%s"
+		
 		chkLabel = ["Limit to characters available in current font", "No repeating characters", "Randomize output"]
-		#chkValues = [self.limitToCharset, self.banRepetitions, self.randomize]
-		for i in range(3):
-			y3 = i*interval*.875
-			attrName = chkNameTemplate % i
-			setattr(self.w.optionsBox, attrName, CheckBox((boxPadding, y3+3, -boxPadding, 22), chkLabel[i])) 
-			Check = getattr(self.w.optionsBox, attrName)
-			Check.binding(DefaultsController, 'com.ninastoessinger.'+attrName)
+		y3 = 0
+		self.w.optionsBox.limitToCharset = CheckBox((boxPadding, y3+3, -boxPadding, 22), "Limit to characters available in current font")
+		self.w.optionsBox.limitToCharset.binding(DefaultsController, 'com.ninastoessinger.limitToCharset')
+		y3 +=interval*.875
+		self.w.optionsBox.banRepetitions = CheckBox((boxPadding, y3+3, -boxPadding, 22), "No repeating characters")
+		self.w.optionsBox.banRepetitions.binding(DefaultsController, 'com.ninastoessinger.banRepetitions')
+		y3 +=interval*.875
+		self.w.optionsBox.randomize = CheckBox((boxPadding, y3+3, -boxPadding, 22), "Randomize output")
+		self.w.optionsBox.randomize.binding(DefaultsController, 'com.ninastoessinger.randomize')
+		
 		y += interval*3.5
 		self.w.submit = Button((10,y,-10, 22), 'words please!', callback=self.makeWords)
 		self.w.open()
 		
-	def loadPlugin(self):
-		pass
-	def interfaceVersion(self):
-		return 1
-	def fontCharacters(self):
+	def fontCharacters(self, font):
 		global warned
-		f = CurrentFont()
-		if not f:
+		if not font:
 			if warned == False:
 				Message("No open fonts found; word-o-mat will output to the Output Window.")
 				warned = True
 			return []
 		charset = []
-		for g in f:
+		for g in font:
 			charset.append(str(g.name))
 		return charset
 		
@@ -265,21 +266,24 @@ class WordomatWindow:
 	
 	def makeWords(self, sender=None):
 		global warned
+		self.f = CurrentFont()
+		self.fontChars = self.fontCharacters(self.f)
 		self.wordCount = self.getIntegerValue(self.w.basicsBox.wordCount)
 		self.minLength = self.getIntegerValue(self.w.basicsBox.minLength)
 		self.maxLength = self.getIntegerValue(self.w.basicsBox.maxLength)
+		self.case = self.w.basicsBox.case.get()
 		self.requiredLetters = self.getInputString(self.w.reqBox.mustLettersBox, False)
 		self.requiredGroups[0] = self.getInputString(self.w.reqBox.group1box, True)
 		self.requiredGroups[1] = self.getInputString(self.w.reqBox.group2box, True)
 		self.requiredGroups[2] = self.getInputString(self.w.reqBox.group3box, True)
 		self.bannedLetters = self.getInputString(self.w.reqBox.notLettersBox, False)
 		self.bannedLetters.append(" ")
-		self.limitToCharset = self.w.optionsBox.checkbox0.get()
-		self.banRepetitions = self.w.optionsBox.checkbox1.get()
-		self.randomize = self.w.optionsBox.checkbox2.get()
-		self.fontChars = self.fontCharacters()
+		self.limitToCharset = self.w.optionsBox.limitToCharset.get()
+		self.banRepetitions = self.w.optionsBox.banRepetitions.get()
+		self.randomize = self.w.optionsBox.randomize.get()
 		self.outputWords = [] #initialize/empty
-		
+		Defaults = NSUserDefaults.standardUserDefaults()
+		Defaults.synchronize()
 		checker = wordChecker(self.limitToCharset, self.fontChars, self.requiredLetters, self.requiredGroups, self.bannedLetters, self.banRepetitions, self.minLength, self.maxLength)
 		for i in self.allWords:
 			if len(self.outputWords) >= self.wordCount:
@@ -289,6 +293,9 @@ class WordomatWindow:
 					w = choice(self.allWords)
 				else:
 					w = i
+				if self.case == 1:   w = w.lower()
+				elif self.case == 2: w = w.title()
+				elif self.case == 3: w = w.upper()
 				if checker.checkWord(w, self.outputWords):
 					self.outputWords.append(w)
 		# output
