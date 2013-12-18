@@ -19,25 +19,30 @@ path = paths[0]
 path = os.path.join(path, "Glyphs/Scripts")
 if not path in sys.path:
 	sys.path.append(path)
+hasAllModules = True
+try:
+	from vanilla import * 
+	from robofab.world import CurrentFont
+	from robofab.interface.all.dialogs import Message
+	from random import choice
 
-from vanilla import * 
-from robofab.world import CurrentFont
-from robofab.interface.all.dialogs import Message
-from random import choice
+	from GlyphsApp import Glyphs
 
-from GlyphsApp import Glyphs
 
-def setup_binding_CheckBox(self, Object, KeyPath, options = objc.nil):
-	self._nsObject.subviews()[0].bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
-CheckBox.binding = setup_binding_CheckBox
+	def setup_binding_CheckBox(self, Object, KeyPath, options = objc.nil):
+		self._nsObject.subviews()[0].bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
+	CheckBox.binding = setup_binding_CheckBox
 
-def setup_binding_Control(self, Object, KeyPath, options = objc.nil):
-	self._nsObject.bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
-EditText.binding = setup_binding_Control
-ComboBox.binding = setup_binding_Control
-def setup_binding_PopUpButton(self, Object, KeyPath, options = objc.nil):
-	self._nsObject.bind_toObject_withKeyPath_options_("selectedIndex", Object, "values."+KeyPath, options)
-PopUpButton.binding = setup_binding_PopUpButton
+	def setup_binding_Control(self, Object, KeyPath, options = objc.nil):
+		self._nsObject.bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
+	EditText.binding = setup_binding_Control
+	ComboBox.binding = setup_binding_Control
+	def setup_binding_PopUpButton(self, Object, KeyPath, options = objc.nil):
+		self._nsObject.bind_toObject_withKeyPath_options_("selectedIndex", Object, "values."+KeyPath, options)
+	PopUpButton.binding = setup_binding_PopUpButton
+
+except:
+	hasAllModules = False
 warned = False
 
 class wordChecker(object):
@@ -334,6 +339,9 @@ class WordOMat(NSObject, GlyphsPlugin):
 		return 1
 	
 	def showWindow(self):
+		if not hasAllModules:
+			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla and robofab module to be installed", "", "", "")
+			return
 		if not self.wordomat or not self.wordomat.w._window:
 			self.wordomat = WordomatWindow()
 		else:
