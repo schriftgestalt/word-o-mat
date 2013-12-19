@@ -42,7 +42,7 @@ try:
 	
 except:
 	hasAllModules = False
-	print "Exception in import code:"
+	print "Exception in word-o-mat import:"
 	print '-'*60
 	traceback.print_exc(file=sys.stdout)
 	print '-'*60
@@ -55,7 +55,7 @@ try:
 	if callable(getGlyph_op):
 		hasCurrentWrapper = True
 except:
-	print "Exception in import code:"
+	print "Exception in word-o-mat import:"
 	print '-'*60
 	traceback.print_exc(file=sys.stdout)
 	print '-'*60
