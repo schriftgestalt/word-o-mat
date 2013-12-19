@@ -350,7 +350,7 @@ class WordOMat(NSObject, GlyphsPlugin):
 	
 	def showWindow(self):
 		if not hasAllModules:
-			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla and robofab module to be installed", "", "", "")
+			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla and robofab module to be installed for python 2.6.", "", "", "")
 			return
 		if not hasCurrentWrapper:
 			NSRunAlertPanel("Problem with some RoboFab wrapper", "Please install the latest version of the file \"objectsGS.py\" from https://github.com/schriftgestalt/Glyphs-Scripts", "", "", "")
