@@ -20,12 +20,13 @@ path = os.path.join(path, "Glyphs/Scripts")
 if not path in sys.path:
 	sys.path.append(path)
 hasAllModules = True
+hasCurrentWrapper = False
 try:
 	from vanilla import * 
 	from robofab.world import CurrentFont
 	from robofab.interface.all.dialogs import Message
+	from objectsGS import RFont
 	from random import choice
-
 	from GlyphsApp import Glyphs
 
 
@@ -40,10 +41,19 @@ try:
 	def setup_binding_PopUpButton(self, Object, KeyPath, options = objc.nil):
 		self._nsObject.bind_toObject_withKeyPath_options_("selectedIndex", Object, "values."+KeyPath, options)
 	PopUpButton.binding = setup_binding_PopUpButton
-
+	
 except:
 	hasAllModules = False
 warned = False
+
+# check for latest version of objectsGS.py
+try:
+	getGlyph_op = getattr(RFont, "getGlyph", None)
+	print "__getGlyph_op", getGlyph_op
+	if callable(getGlyph_op):
+		hasCurrentWrapper = True
+except:
+	pass
 
 class wordChecker(object):
 	def __init__(self, limitToCharset, fontChars, requiredLetters, requiredGroups, bannedLetters, banRepetitions, minLength, maxLength):
@@ -341,6 +351,9 @@ class WordOMat(NSObject, GlyphsPlugin):
 	def showWindow(self):
 		if not hasAllModules:
 			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla and robofab module to be installed", "", "", "")
+			return
+		if not hasCurrentWrapper:
+			NSRunAlertPanel("Problem with some RoboFab wrapper", "Please install the latest version of the file \"objectsGS.py\" from https://github.com/schriftgestalt/Glyphs-Scripts", "", "", "")
 			return
 		if not self.wordomat or not self.wordomat.w._window:
 			self.wordomat = WordomatWindow()
