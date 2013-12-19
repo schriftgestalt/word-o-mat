@@ -5,7 +5,7 @@
 # Default wordlist ukacd.txt is from http://www.crosswordman.com/wordlist.html
 # v1.0 / Nina Stössinger 29.11.2013 / with thanks to Just van Rossum / KABK t]m 1314
 # ported by Georg Seifert 11.12.2013
-import objc, sys, os, re
+import objc, sys, os, re, traceback
 from Foundation import *
 from AppKit import *
 
@@ -25,10 +25,8 @@ try:
 	from vanilla import * 
 	from robofab.world import CurrentFont
 	from robofab.interface.all.dialogs import Message
-	from objectsGS import RFont
 	from random import choice
 	from GlyphsApp import Glyphs
-
 
 	def setup_binding_CheckBox(self, Object, KeyPath, options = objc.nil):
 		self._nsObject.subviews()[0].bind_toObject_withKeyPath_options_("value", Object, "values."+KeyPath, options)
@@ -44,16 +42,23 @@ try:
 	
 except:
 	hasAllModules = False
+	print "Exception in import code:"
+	print '-'*60
+	traceback.print_exc(file=sys.stdout)
+	print '-'*60
 warned = False
 
 # check for latest version of objectsGS.py
 try:
+	from objectsGS import RFont
 	getGlyph_op = getattr(RFont, "getGlyph", None)
-	print "__getGlyph_op", getGlyph_op
 	if callable(getGlyph_op):
 		hasCurrentWrapper = True
 except:
-	pass
+	print "Exception in import code:"
+	print '-'*60
+	traceback.print_exc(file=sys.stdout)
+	print '-'*60
 
 class wordChecker(object):
 	def __init__(self, limitToCharset, fontChars, requiredLetters, requiredGroups, bannedLetters, banRepetitions, minLength, maxLength):
@@ -350,7 +355,7 @@ class WordOMat(NSObject, GlyphsPlugin):
 	
 	def showWindow(self):
 		if not hasAllModules:
-			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla and robofab module to be installed for python 2.6.", "", "", "")
+			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla, robofab and fontTools module to be installed for python 2.6.", "", "", "")
 			return
 		if not hasCurrentWrapper:
 			NSRunAlertPanel("Problem with some RoboFab wrapper", "Please install the latest version of the file \"objectsGS.py\" from https://github.com/schriftgestalt/Glyphs-Scripts", "", "", "")
