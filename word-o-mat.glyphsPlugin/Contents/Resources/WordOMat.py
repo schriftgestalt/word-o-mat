@@ -315,8 +315,8 @@ class WordomatWindow:
 					w = i
 				if self.case == 1:   w = w.lower()
 				elif self.case == 2: w = w.title()
-				elif self.case == 3: w = w.upper()
 				if checker.checkWord(w, self.outputWords):
+					if self.case == 3: w = w.upper()
 					self.outputWords.append(w)
 		# output
 		
