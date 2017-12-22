@@ -810,8 +810,11 @@ class WordomatWindow:
          
     def windowClose(self, sender):
         """Remove observers when the extension window is closed."""
-        removeObserver(self, "fontDidOpen")
-        removeObserver(self, "fontWillClose")
+        try:
+            removeObserver(self, "fontDidOpen")
+            removeObserver(self, "fontWillClose")
+        except:
+            pass
 
 GlyphsPlugin = objc.protocolNamed('GlyphsPlugin')
 class WordOMat(NSObject, GlyphsPlugin):
