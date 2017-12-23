@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # coding=utf-8
 #
 """
@@ -14,99 +13,25 @@ update to version 2.2.5, 19.12.2017
 """
 
 import codecs
-import objc, re, traceback
-from Foundation import NSBundle, NSObject, NSUserDefaults
-from AppKit import NSApplication, NSMenuItem
+import re
+import webbrowser
 
-hasAllModules = True
-hasCurrentWrapper = False
-try:
-    from vanilla import * 
-    from robofab.world import CurrentFont
-    from robofab.interface.all.dialogs import Message
-    from random import choice
-    import wordcheck
-    from GlyphsApp import Glyphs
-    GSEditViewController = objc.lookUpClass("GSEditViewController")
-except:
-    hasAllModules = False
-    print "Exception in word-o-mat import:"
-    print '-'*60
-    traceback.print_exc(file=sys.stdout)
-    print '-'*60
+
+from lib import * 
+from robofab.world import CurrentFont
+from robofab.interface.all.dialogs import Message
+from vanilla.dialogs import getFile
+from vanilla import * 
+
+from random import choice
+
+import wordcheck
+reload(wordcheck) 
+
+
+
 warned = False
 
-# glyphs specific ajustments:
-
-def registerExtensionDefaults(keyValues):
-    NSUserDefaults.standardUserDefaults().registerDefaults_(keyValues)
-def getExtensionDefault(key, default = None):
-    value = NSUserDefaults.standardUserDefaults().objectForKey_(key)
-    if value is None:
-        return default
-    return value
-def setExtensionDefault(key, value):
-    NSUserDefaults.standardUserDefaults().setObject_forKey_(value, key)
-
-def ExtensionBundle(title):
-    path = __file__
-    bundlePath = path[:path.find("/Contents/Resources/")]
-    bundle = NSBundle.bundleWithPath_(bundlePath)
-    return bundle
-
-def getResourceFilePath(self, filename):
-    return self.pathForResource_ofType_(filename, "txt")
-
-NSBundle.getResourceFilePath = getResourceFilePath
-
-def addObserver(a, b, c):
-    pass
-def removeObserver(a, b):
-    pass
-
-class AccordionView(Group):
-    
-    def __init__(self, posSize, accItems):
-        self._setupView(self.nsViewClass, posSize)
-        padd = 12
-        y = 2
-        idx = 0
-        for accItem in accItems:
-            
-            if idx > 0:
-                line = HorizontalLine((padd, y - 1, -padd, 1))
-                setattr(self, "line%d"%idx, line)
-                y += 2
-            label = TextBox((padd, y, -padd, 22), accItem["label"], sizeStyle="small")
-            setattr(self, "title%d"%idx, label)
-            y += 16
-            height = accItem["size"]
-            panel = Group((0, y, 250, height))
-            setattr(self, "panel%d"%idx, panel)
-            panel.view = accItem["view"]
-            y += height
-            idx+=1
-
-def OpenSpaceCenter(font):
-    return font._font.currentTab
-    
-def __setRaw__(self, text):
-    self.graphicView().setDisplayString_(text)
-GSEditViewController.setRaw = __setRaw__
-
-# check for latest version of objectsGS.py
-try:
-    from objectsGS import RFont
-    getGlyph_op = getattr(RFont, "getGlyph", None)
-    if callable(getGlyph_op):
-        hasCurrentWrapper = True
-except:
-    print "Exception in word-o-mat import:"
-    print '-'*60
-    traceback.print_exc(file=sys.stdout)
-    print '-'*60
-
-# ende glyphs specific ajustments:
 
 class WordomatWindow:
     
@@ -181,7 +106,7 @@ class WordomatWindow:
         self.g1.colorWell.set(None)
         
         # populate from prefs
-        if self.reqMarkColor is not "None": # initial pref
+        if self.reqMarkColor is not "None": # initial pref
             try:
                 r, g, b, a = self.reqMarkColor
                 savedColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, a)
@@ -308,6 +233,7 @@ class WordomatWindow:
             }
         for variableName, pref in prefsToLoad.iteritems():
             setattr(self, variableName, getExtensionDefault(pref))
+        
         # restore booleans from strings
         limitPref = "com.ninastoessinger.word-o-mat.limitToCharset" 
         self.limitToCharset = self.readExtDefaultBoolean(getExtensionDefault(limitPref)) if CurrentFont() else False
@@ -814,36 +740,3 @@ class WordomatWindow:
         """Remove observers when the extension window is closed."""
         removeObserver(self, "fontDidOpen")
         removeObserver(self, "fontWillClose")
-
-GlyphsPlugin = objc.protocolNamed('GlyphsPlugin')
-class WordOMat(NSObject, GlyphsPlugin):
-    
-    def init(self):
-        self.wordomat = None
-        return self
-    
-    def loadPlugin(self):
-        mainMenu = NSApplication.sharedApplication().mainMenu()
-        s = objc.selector(self.showWindow,signature='v@:')
-        newMenuItem = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(self.title(), s, "" )
-        newMenuItem.setTarget_(self)
-        
-        mainMenu.itemAtIndex_(2).submenu().addItem_(newMenuItem)
-    
-    def title(self):
-        return "word-o-mat"
-    
-    def interfaceVersion(self):
-        return 1
-    
-    def showWindow(self):
-        if not hasAllModules:
-            NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla, robofab and fontTools module to be installed for python 2.6.", "", "", "")
-            return
-        if not hasCurrentWrapper:
-            NSRunAlertPanel("Problem with some RoboFab wrapper", "Please install the latest version of the file \"objectsGS.py\" from https://github.com/schriftgestalt/Glyphs-Scripts", "", "", "")
-            return
-        if not self.wordomat or not self.wordomat.w._window:
-            self.wordomat = WordomatWindow()
-        else:
-            self.wordomat.w.show()
