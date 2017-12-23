@@ -61,7 +61,9 @@ NSBundle.getResourceFilePath = getResourceFilePath
 
 def addObserver(a, b, c):
     pass
-    
+def removeObserver(a, b):
+    pass
+
 class AccordionView(Group):
     
     def __init__(self, posSize, accItems):
