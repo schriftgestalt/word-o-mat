@@ -13,6 +13,7 @@
 
 from GlyphsApp import *
 from GlyphsApp.plugins import *
+import traceback
 
 hasAllModules = True
 hasCurrentWrapper = False
