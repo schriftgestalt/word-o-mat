@@ -335,7 +335,7 @@ class WordomatWindow:
             except TypeError:
                 filePath = None
                 self.customWords = []
-                print "word-o-mat: Input of custom word list canceled, using default"
+                print("word-o-mat: Input of custom word list canceled, using default")
             if filePath is not None:
                 fo = codecs.open(filePath, mode="r", encoding="utf-8")
                 lines = fo.read()
@@ -725,9 +725,9 @@ class WordomatWindow:
                     if warned == False:
                         Message("word-o-mat: No open fonts found; words will be displayed in the Output Window.")
                     warned = True
-                    print "word-o-mat:", outputString
+                    print("word-o-mat:", outputString)
         else:
-            print "word-o-mat: Aborted because of errors"
+            print("word-o-mat: Aborted because of errors")
     
          
     def fontClosed(self, info):

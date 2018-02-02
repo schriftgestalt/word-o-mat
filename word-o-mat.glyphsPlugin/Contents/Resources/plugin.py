@@ -24,10 +24,10 @@ try:
 	from WordOMat import WordomatWindow
 except:
 	hasAllModules = False
-	print "Exception in word-o-mat import:"
-	print '-'*60
+	print("Exception in word-o-mat import:")
+	print('-'*60)
 	traceback.print_exc(file=sys.stdout)
-	print '-'*60
+	print('-'*60)
 
 # check for latest version of objectsGS.py
 try:
@@ -36,10 +36,10 @@ try:
 	if callable(getGlyph_op):
 		hasCurrentWrapper = True
 except:
-	print "Exception in word-o-mat import:"
-	print '-'*60
+	print("Exception in word-o-mat import:")
+	print('-'*60)
 	traceback.print_exc(file=sys.stdout)
-	print '-'*60
+	print('-'*60)
 
 class WordOMat(GeneralPlugin):
 	def settings(self):
