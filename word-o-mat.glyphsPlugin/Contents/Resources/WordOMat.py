@@ -96,10 +96,7 @@ class WordomatWindow:
             self.g1.base.set(0)    # Use any
             self.g1.base.enable(False) # Disable selection
         else:
-            if self.limitToCharset == False:
-                self.g1.base.set(0) # Use any
-            else:
-                self.g1.base.set(1) # Use current font
+            self.g1.base.set(self.limitToCharset)
         '''
         # mark color selection
         self.g1.colorWell = NoneTypeColorWell((-22, 61, -0, 22))
@@ -213,7 +210,7 @@ class WordomatWindow:
             "com.ninastoessinger.word-o-mat.minLength":      3,
             "com.ninastoessinger.word-o-mat.maxLength":      15,
             "com.ninastoessinger.word-o-mat.case":           0,
-            "com.ninastoessinger.word-o-mat.limitToCharset": "True",
+            "com.ninastoessinger.word-o-mat.limitToCharset": 1,
             "com.ninastoessinger.word-o-mat.source":         0,
             "com.ninastoessinger.word-o-mat.matchMode":      "text",
             "com.ninastoessinger.word-o-mat.matchPattern":   "",
@@ -223,20 +220,17 @@ class WordomatWindow:
         
         # load prefs into variables/properties
         prefsToLoad = {
-                "wordCount":    "com.ninastoessinger.word-o-mat.wordCount",
-                "minLength":    "com.ninastoessinger.word-o-mat.minLength",
-                "maxLength":    "com.ninastoessinger.word-o-mat.maxLength",
-                "case":         "com.ninastoessinger.word-o-mat.case",
-                "matchMode":    "com.ninastoessinger.word-o-mat.matchMode",
-                "matchPattern": "com.ninastoessinger.word-o-mat.matchPattern",
-                "reqMarkColor": "com.ninastoessinger.word-o-mat.markColor",
+                "wordCount":     "com.ninastoessinger.word-o-mat.wordCount",
+                "minLength":     "com.ninastoessinger.word-o-mat.minLength",
+                "maxLength":     "com.ninastoessinger.word-o-mat.maxLength",
+                "case":          "com.ninastoessinger.word-o-mat.case",
+                "limitToCharset":"com.ninastoessinger.word-o-mat.limitToCharset",
+                "matchMode":     "com.ninastoessinger.word-o-mat.matchMode",
+                "matchPattern":  "com.ninastoessinger.word-o-mat.matchPattern",
+                "reqMarkColor":  "com.ninastoessinger.word-o-mat.markColor",
             }
         for variableName, pref in prefsToLoad.iteritems():
             setattr(self, variableName, getExtensionDefault(pref))
-        
-        # restore booleans from strings
-        limitPref = "com.ninastoessinger.word-o-mat.limitToCharset" 
-        self.limitToCharset = self.readExtDefaultBoolean(getExtensionDefault(limitPref)) if CurrentFont() else False
         
         # parse mark color pref
         # print "***", self.reqMarkColor
@@ -335,7 +329,7 @@ class WordomatWindow:
             except TypeError:
                 filePath = None
                 self.customWords = []
-                print "word-o-mat: Input of custom word list canceled, using default"
+                print("word-o-mat: Input of custom word list canceled, using default")
             if filePath is not None:
                 fo = codecs.open(filePath, mode="r", encoding="utf-8")
                 lines = fo.read()
@@ -579,12 +573,9 @@ class WordomatWindow:
         self.case = self.g1.case.get()
         self.customCharset = []
         
-        charset = self.g1.base.get()
-        self.limitToCharset = True
-        if charset == 0:
-            self.limitToCharset = False
-            
-        elif charset == 2: # use selection
+        self.limitToCharset = self.g1.base.get()
+        
+        if self.limitToCharset == 2: # use selection
             if len(self.f.selection) == 0: # nothing selected
                 Message("word-o-mat: No glyphs were selected in the font window. Will use any characters available in the current font.")
                 self.g1.base.set(1) # use font chars
@@ -600,7 +591,7 @@ class WordomatWindow:
                 except AttributeError: 
                     pass 
                     
-        elif charset == 3: # use mark color
+        elif self.limitToCharset == 3: # use mark color
             '''
             c = self.g1.colorWell.get()
             
@@ -667,7 +658,7 @@ class WordomatWindow:
             "minLength": self.minLength, 
             "maxLength": self.maxLength, 
             "case": self.case, 
-            "limitToCharset": self.writeExtDefaultBoolean(self.limitToCharset), 
+            "limitToCharset": self.limitToCharset, 
             "source": self.source,
             "matchMode": self.matchMode,
             "matchPattern": self.matchPattern, # non compiled string
@@ -725,9 +716,9 @@ class WordomatWindow:
                     if warned == False:
                         Message("word-o-mat: No open fonts found; words will be displayed in the Output Window.")
                     warned = True
-                    print "word-o-mat:", outputString
+                    print("word-o-mat:", outputString)
         else:
-            print "word-o-mat: Aborted because of errors"
+            print("word-o-mat: Aborted because of errors")
     
          
     def fontClosed(self, info):
