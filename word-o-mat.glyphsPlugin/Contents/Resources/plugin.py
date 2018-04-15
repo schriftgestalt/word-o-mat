@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+from __future__ import print_function
+
 ###########################################################################################################
 #
 #
@@ -13,8 +15,8 @@
 
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-import traceback
-
+import traceback, sys
+from Foundation import NSString
 hasAllModules = True
 hasCurrentWrapper = False
 try:
@@ -24,10 +26,10 @@ try:
 	from WordOMat import WordomatWindow
 except:
 	hasAllModules = False
-	print "Exception in word-o-mat import:"
-	print '-'*60
+	print("Exception in word-o-mat import:")
+	print('-'*60)
 	traceback.print_exc(file=sys.stdout)
-	print '-'*60
+	print('-'*60)
 
 # check for latest version of objectsGS.py
 try:
@@ -36,21 +38,21 @@ try:
 	if callable(getGlyph_op):
 		hasCurrentWrapper = True
 except:
-	print "Exception in word-o-mat import:"
-	print '-'*60
+	print("Exception in word-o-mat import:")
+	print('-'*60)
 	traceback.print_exc(file=sys.stdout)
-	print '-'*60
+	print('-'*60)
 
 class WordOMat(GeneralPlugin):
 	def settings(self):
-		self.name = "word-o-mat"
+		self.name = u"word-o-mat"
 		self.wordomat = None
 	
 	def start(self):
-		newMenuItem = NSMenuItem(self.name, self.showWindow)
+		newMenuItem = NSMenuItem(self.name, self.showWindow_)
 		Glyphs.menu[EDIT_MENU].append(newMenuItem)
 	
-	def showWindow(self, sender):
+	def showWindow_(self, sender):
 		""" Do something like show a window"""
 		if not hasAllModules:
 			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla, robofab and fontTools module to be installed for python 2.6.", "", "", "")
