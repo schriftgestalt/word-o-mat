@@ -67,7 +67,11 @@ class AccordionView(Group):
 			idx+=1
 
 def OpenSpaceCenter(font):
-	return font.currentTab
+	currentTab = font.currentTab
+	if not currentTab:
+		font.newTab()
+		currentTab = font.currentTab
+	return currentTab
 	
 def __setRaw__(self, text):
 	self.graphicView().setDisplayString_(text)
