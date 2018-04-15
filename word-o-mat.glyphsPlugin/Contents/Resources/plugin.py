@@ -18,26 +18,12 @@ from GlyphsApp.plugins import *
 import traceback, sys
 from Foundation import NSString
 hasAllModules = True
-hasCurrentWrapper = False
 try:
 	from vanilla import * 
-	from robofab.world import CurrentFont
 	import WordOMat
 	from WordOMat import WordomatWindow
 except:
 	hasAllModules = False
-	print("Exception in word-o-mat import:")
-	print('-'*60)
-	traceback.print_exc(file=sys.stdout)
-	print('-'*60)
-
-# check for latest version of objectsGS.py
-try:
-	from objectsGS import RFont
-	getGlyph_op = getattr(RFont, "getGlyph", None)
-	if callable(getGlyph_op):
-		hasCurrentWrapper = True
-except:
 	print("Exception in word-o-mat import:")
 	print('-'*60)
 	traceback.print_exc(file=sys.stdout)
@@ -55,10 +41,7 @@ class WordOMat(GeneralPlugin):
 	def showWindow_(self, sender):
 		""" Do something like show a window"""
 		if not hasAllModules:
-			NSRunAlertPanel("Problem with some modules", "This plugin needs the vanilla, robofab and fontTools module to be installed for python 2.6.", "", "", "")
-			return
-		if not hasCurrentWrapper:
-			NSRunAlertPanel("Problem with some RoboFab wrapper", "Please install the latest version of the file \"objectsGS.py\" from https://github.com/schriftgestalt/Glyphs-Scripts", "", "", "")
+			Message("Problem with some modules", "This plugin needs the vanilla module to be installed for python 2.7.")
 			return
 		if not self.wordomat or not self.wordomat.w._window:
 			self.wordomat = WordomatWindow()

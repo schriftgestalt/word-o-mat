@@ -18,8 +18,6 @@ import webbrowser
 
 
 from lib import * 
-from robofab.world import CurrentFont
-from robofab.interface.all.dialogs import Message
 from vanilla.dialogs import getFile
 from vanilla import * 
 
@@ -347,7 +345,7 @@ class WordomatWindow:
             return []
         charset = []
         gnames = []
-        for g in font:
+        for g in font.glyphs:
             if g.unicode is not None:
                 try:
                     charset.append(unichr(int(g.unicode)))

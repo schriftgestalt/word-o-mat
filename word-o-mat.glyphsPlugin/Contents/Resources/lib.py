@@ -9,10 +9,14 @@ from Foundation import NSBundle, NSObject, NSUserDefaults
 from AppKit import NSApplication, NSMenuItem
 from vanilla import * 
 
-from GlyphsApp import Glyphs
+from GlyphsApp import Glyphs, Message
 
 
-__all__ = ["registerExtensionDefaults", "getExtensionDefault", "setExtensionDefault", "ExtensionBundle", "addObserver", "removeObserver", "AccordionView", "OpenSpaceCenter"]
+__all__ = ["CurrentFont", "Message", "registerExtensionDefaults", "getExtensionDefault", "setExtensionDefault", "ExtensionBundle", "addObserver", "removeObserver", "AccordionView", "OpenSpaceCenter"]
+
+
+def CurrentFont():
+	return Glyphs.font
 
 def registerExtensionDefaults(keyValues):
 	NSUserDefaults.standardUserDefaults().registerDefaults_(keyValues)
@@ -63,7 +67,7 @@ class AccordionView(Group):
 			idx+=1
 
 def OpenSpaceCenter(font):
-	return font._font.currentTab
+	return font.currentTab
 	
 def __setRaw__(self, text):
 	self.graphicView().setDisplayString_(text)
