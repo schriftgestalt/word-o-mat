@@ -26,12 +26,9 @@ from vanilla import *
 from random import choice
 
 import wordcheck
-reload(wordcheck) 
-
-
+reload(wordcheck)
 
 warned = False
-
 
 class WordomatWindow:
     
@@ -231,7 +228,10 @@ class WordomatWindow:
             }
         for variableName, pref in prefsToLoad.iteritems():
             setattr(self, variableName, getExtensionDefault(pref))
-        
+        try:
+            self.limitToCharset = int(self.limitToCharset)
+        except:
+            self.limitToCharset = 1
         # parse mark color pref
         # print "***", self.reqMarkColor
         if self.reqMarkColor is not "None":
@@ -345,8 +345,8 @@ class WordomatWindow:
         """Check which Unicode characters are available in the font."""
         if not font:
             return []
-        charset = [] 
-        gnames = []   
+        charset = []
+        gnames = []
         for g in font:
             if g.unicode is not None:
                 try:
@@ -381,9 +381,9 @@ class WordomatWindow:
                         except TypeError: # unicode not set
                             Message ("word-o-mat: Glyph \"%s\" was found, but does not appear to have a Unicode value set. It can therefore not be processed, and will be skipped." % c)
                     else:
-            			    Message ("word-o-mat: Conflict: Character \"%s\" was specified as required, but not found. It will be skipped." % c)
+                        Message ("word-o-mat: Conflict: Character \"%s\" was specified as required, but not found. It will be skipped." % c)
                 else:
-        			    Message ("word-o-mat: Sorry, matching by glyph name is only supported when a font is open. Character \"%s\" will be skipped." % c)
+                    Message ("word-o-mat: Sorry, matching by glyph name is only supported when a font is open. Character \"%s\" will be skipped." % c)
             else: # character values
                 result2.append(c)
         result = [unicode(s) for s in result2 if s]
