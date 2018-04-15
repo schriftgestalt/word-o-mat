@@ -371,17 +371,17 @@ class WordomatWindow:
         for c in result1:
             if len(c)>1: # glyph names
                 if self.f is not None:
-                    if self.f.has_key(c):
-                        g = self.f[c]
+                    g = self.f.glyphs[c]
+                    if g:
                         try:
                             value = unicode(unichr(int(g.unicode)))
                             result2.append(value)
                         except TypeError: # unicode not set
-                            Message ("word-o-mat: Glyph \"%s\" was found, but does not appear to have a Unicode value set. It can therefore not be processed, and will be skipped." % c)
+                            Message(title="word-o-mat", message="Glyph \"%s\" was found, but does not appear to have a Unicode value set. It can therefore not be processed, and will be skipped." % c)
                     else:
-                        Message ("word-o-mat: Conflict: Character \"%s\" was specified as required, but not found. It will be skipped." % c)
+                        Message(title="word-o-mat", message="Conflict: Character \"%s\" was specified as required, but not found. It will be skipped." % c)
                 else:
-                    Message ("word-o-mat: Sorry, matching by glyph name is only supported when a font is open. Character \"%s\" will be skipped." % c)
+                    Message(title="word-o-mat", message="Sorry, matching by glyph name is only supported when a font is open. Character \"%s\" will be skipped." % c)
             else: # character values
                 result2.append(c)
         result = [unicode(s) for s in result2 if s]
@@ -413,7 +413,7 @@ class WordomatWindow:
                 messageCharset = "font"
             for c in required:
                 if not c in useCharset:
-                    Message ("word-o-mat: Conflict: Character \"%s\" was specified as required, but not found in the %s." % (c, messageCharset))
+                    Message(title="word-o-mat", message="Conflict: Character \"%s\" was specified as required, but not found in the %s." % (c, messageCharset))
                     return False
             return True
         
@@ -424,7 +424,7 @@ class WordomatWindow:
         """
         if self.matchMode != "grep":
             if len(required) > maxLength:
-                Message ("word-o-mat: Conflict: Required characters exceed maximum word length. Please revise.")
+                Message(title="word-o-mat", message="Conflict: Required characters exceed maximum word length. Please revise.")
                 return False
         return True
         
@@ -462,7 +462,7 @@ class WordomatWindow:
     def checkMinVsMax(self, minLength, maxLength):
         """Check user input for minimal/maximal word length and see if it makes sense."""
         if not minLength <= maxLength:
-            Message ("word-o-mat: Confusing input for minimal/maximal word length. Please fix.")
+            Message(title="word-o-mat", message="Confusing input for minimal/maximal word length. Please fix.")
             return False
         return True
         
@@ -475,7 +475,7 @@ class WordomatWindow:
                 return True
             except re.error:
                 self.matchPatternRE = None
-                Message ("word-o-mat: Could not compile regular expression.") 
+                Message(title="word-o-mat", message="Could not compile regular expression.") 
                 return False
         else:
             self.matchPatternRE = None
@@ -575,7 +575,7 @@ class WordomatWindow:
         
         if self.limitToCharset == 2: # use selection
             if len(self.f.selection) == 0: # nothing selected
-                Message("word-o-mat: No glyphs were selected in the font window. Will use any characters available in the current font.")
+                Message(title="word-o-mat", message="No glyphs were selected in the font window. Will use any characters available in the current font.")
                 self.g1.base.set(1) # use font chars
             else:
                 try:
@@ -609,7 +609,7 @@ class WordomatWindow:
                         pass
             '''
             if len(self.customCharset) == 0:
-                Message("word-o-mat: Found no glyphs that match the specified mark color. Will use any characters available in the current font.")
+                Message(title="word-o-mat", message="Found no glyphs that match the specified mark color. Will use any characters available in the current font.")
                 self.g1.base.set(1) # use font chars
                 self.toggleColorSwatch(0)
             
@@ -700,7 +700,7 @@ class WordomatWindow:
             
             # output
             if len(self.outputWords) < 1:
-                Message("word-o-mat: no matching words found <sad trombone>")
+                Message(title="word-o-mat", message="no matching words found <sad trombone>")
             else:
                 joinString = " "
                 if self.g3.listOutput.get() == True:
@@ -712,7 +712,7 @@ class WordomatWindow:
                     sp.setRaw(outputString)
                 except:
                     if warned == False:
-                        Message("word-o-mat: No open fonts found; words will be displayed in the Output Window.")
+                        Message(title="word-o-mat", message="No open fonts found; words will be displayed in the Output Window.")
                     warned = True
                     print("word-o-mat:", outputString)
         else:
