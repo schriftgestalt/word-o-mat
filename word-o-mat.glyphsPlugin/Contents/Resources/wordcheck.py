@@ -1,6 +1,5 @@
 import codecs
 import re
-from robofab.interface.all.dialogs import Message
 
 class wordChecker(object):
     """Checks lists of words against a number of specified requirements.
