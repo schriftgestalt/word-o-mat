@@ -585,7 +585,7 @@ class WordomatWindow:
                             try: 
                                 self.customCharset.append(unichr(int(g.unicode, 16)))
                             except ValueError:
-                                pass 
+                                pass
                 except AttributeError: 
                     pass 
                     
