@@ -530,7 +530,7 @@ class WordomatWindow:
     def findKerning(self, chars):
         """Helper function to find kerning between two given glyphs.
         This assumes MetricsMachine style group names."""
-        
+        ''' # code for RF
         markers = ["@MMK_L_", "@MMK_R_"]
         keys = [c for c in chars]
         
@@ -547,6 +547,16 @@ class WordomatWindow:
             return self.f.kerning[key]
         else:
             return 0
+        '''
+        # code for Glyphs
+        glyph1 = self.f.glyphForCharacter_(ord(chars[0]))
+        glyph2 = self.f.glyphForCharacter_(ord(chars[1]))
+        print("chars", chars, glyph1, glyph2)
+        masterId = self.f.masters[0].id
+        kerning = self.f.kerningForFontMasterID_firstGlyph_secondGlyph_direction_(masterId, glyph1, glyph2, 0)
+        if kerning < 100000:
+            return kerning
+        return 0
 
 
     def makeWords(self, sender=None):
