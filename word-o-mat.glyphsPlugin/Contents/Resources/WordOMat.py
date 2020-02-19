@@ -103,7 +103,7 @@ class WordomatWindow:
                 r, g, b, a = self.reqMarkColor
                 savedColor = NSColor.colorWithCalibratedRed_green_blue_alpha_(r, g, b, a)
                 self.g1.colorWell.set(savedColor)
-            except TypeError:
+            except:
                 pass
         
         if self.g1.base.get() != 3:
@@ -268,7 +268,7 @@ class WordomatWindow:
             
     def loadREReference(self, sender):
         """Loads the RE syntax reference in a webbrowser."""
-        url = "https://docs.python.org/2/library/re.html#regular-expression-syntax"
+        url = "https://docs.python.org/3.6/library/re.html#regular-expression-syntax"
         webbrowser.open(url, new=2, autoraise=True)
         
     def readExtDefaultBoolean(self, string): 
@@ -384,7 +384,7 @@ class WordomatWindow:
                     Message(title="word-o-mat", message="Sorry, matching by glyph name is only supported when a font is open. Character \"%s\" will be skipped." % c)
             else: # character values
                 result2.append(c)
-        result = [unicode(s) for s in result2 if s]
+        result = [s for s in result2 if s]
         return result
         
         
@@ -481,7 +481,7 @@ class WordomatWindow:
             self.matchPatternRE = None
             return True
         
-        
+
     def checkInput(self, limitTo, fontChars, customCharset, required, minLength, maxLength, case):
         """Run the user input through all the individual checking functions."""
         
@@ -496,10 +496,10 @@ class WordomatWindow:
             if not reqFunc(*args):
                 return False
         return True
-        
-        
+
+
     # OUTPUT SORTING
-        
+
     def sortWordsByWidth(self, wordlist):
         """Sort output word list by width."""
         f = CurrentFont()
@@ -519,13 +519,13 @@ class WordomatWindow:
                 unitCount += glyphWidth
             # add kerning
             for i in range(len(word)-1):
-            	pair = list(word[i:i+2])
-            	unitCount += int(self.findKerning(pair))
+                pair = list(word[i:i+2])
+                unitCount += int(self.findKerning(pair))
             wordWidths.append(unitCount)
         
         wordWidths_sorted, wordlist_sorted = zip(*sorted(zip(wordWidths, wordlist))) # thanks, stackoverflow
         return wordlist_sorted
-        
+
 
     def findKerning(self, chars):
         """Helper function to find kerning between two given glyphs.
@@ -533,22 +533,22 @@ class WordomatWindow:
         
         markers = ["@MMK_L_", "@MMK_R_"]
         keys = [c for c in chars]
-	    
+        
         for i in range(2):
-	        allGroups = self.f.groups.findGlyph(chars[i])
-	        if len(allGroups) > 0:
-	            for g in allGroups:
-	                if markers[i] in g:
-	                    keys[i] = g
-	                    continue
-	                    
+            allGroups = self.f.groups.findGlyph(chars[i])
+            if len(allGroups) > 0:
+                for g in allGroups:
+                    if markers[i] in g:
+                        keys[i] = g
+                        continue
+                        
         key = (keys[0], keys[1])
-        if self.f.kerning.has_key(key):
-	        return self.f.kerning[key]
+        if key in self.f.kerning:
+            return self.f.kerning[key]
         else:
-	        return 0
-                
-                
+            return 0
+
+
     def makeWords(self, sender=None):
         """Parse user input, save new values to prefs, compile and display the resulting words.
         
