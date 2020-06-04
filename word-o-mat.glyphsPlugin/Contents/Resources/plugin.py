@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 ###########################################################################################################
 #
@@ -15,25 +15,33 @@ from __future__ import print_function
 
 from GlyphsApp import *
 from GlyphsApp.plugins import *
-import traceback, sys
-from Foundation import NSString
+import traceback, sys, objc
+from Foundation import NSString, NSLog
 hasAllModules = True
 try:
+	NSLog("__import 1")
 	from vanilla import * 
+	NSLog("__import 2")
 	import WordOMat
+	NSLog("__import 3")
 	from WordOMat import WordomatWindow
+	NSLog("__import 4")
 except:
+	import traceback
+	NSLog(traceback.format_exc())
 	hasAllModules = False
-	print("Exception in word-o-mat import:")
+	NSLog("Exception in word-o-mat import:")
 	print('-'*60)
-	traceback.print_exc(file=sys.stdout)
+	#traceback.print_exc(file=sys.stdout)
 	print('-'*60)
 
 class WordOMat(GeneralPlugin):
+	@objc.python_method
 	def settings(self):
 		self.name = u"word-o-mat"
 		self.wordomat = None
 	
+	@objc.python_method
 	def start(self):
 		newMenuItem = NSMenuItem(self.name, self.showWindow_)
 		Glyphs.menu[EDIT_MENU].append(newMenuItem)
@@ -48,6 +56,7 @@ class WordOMat(GeneralPlugin):
 		else:
 			self.wordomat.w.show()
 	
+	@objc.python_method
 	def __file__(self):
 		"""Please leave this method unchanged"""
 		return __file__

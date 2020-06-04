@@ -11,6 +11,7 @@ Also to Roberto Arista, Sindre Bremnes, Mathieu Christe/David Hodgetts for help 
 ported by Georg Seifert 11.12.2013
 update to version 2.2.5, 19.12.2017
 """
+from __future__ import print_function
 
 import codecs
 import re
@@ -22,10 +23,7 @@ from vanilla.dialogs import getFile
 from vanilla import * 
 
 from random import choice
-
 import wordcheck
-reload(wordcheck)
-
 warned = False
 
 class WordomatWindow:
@@ -61,10 +59,10 @@ class WordomatWindow:
             "lenTextThree": [176, -0, 'letters', 'left'],
         }
         
-        for label, values in topLineFields.iteritems():
+        for label, values in topLineFields.items():
             setattr(self.g1, label, EditText((values[0], 0, 28, 22), text=values[1], placeholder=str(values[2])))
             
-        for label, values in topLineLabels.iteritems():
+        for label, values in topLineLabels.items():
             setattr(self.g1, label, TextBox((values[0], 3, values[1], 22), text=values[2], alignment=values[3]))
             
         
@@ -224,7 +222,7 @@ class WordomatWindow:
                 "matchPattern":  "com.ninastoessinger.word-o-mat.matchPattern",
                 "reqMarkColor":  "com.ninastoessinger.word-o-mat.markColor",
             }
-        for variableName, pref in prefsToLoad.iteritems():
+        for variableName, pref in prefsToLoad.items():
             setattr(self, variableName, getExtensionDefault(pref))
         try:
             self.limitToCharset = int(self.limitToCharset)
@@ -232,7 +230,7 @@ class WordomatWindow:
             self.limitToCharset = 1
         # parse mark color pref
         # print "***", self.reqMarkColor
-        if self.reqMarkColor is not "None":
+        if self.reqMarkColor != "None":
             if type(self.reqMarkColor) is tuple:
                 self.reqMarkColor = tuple(float(i) for i in self.reqMarkColor)
             else:
@@ -348,7 +346,7 @@ class WordomatWindow:
         for g in font.glyphs:
             if g.unicode is not None:
                 try:
-                    charset.append(unichr(int(g.unicode, 16)))
+                    charset.append(g.charString())
                     gnames.append(g.name)
                 except ValueError:
                     pass
@@ -551,7 +549,7 @@ class WordomatWindow:
         # code for Glyphs
         glyph1 = self.f.glyphForCharacter_(ord(chars[0]))
         glyph2 = self.f.glyphForCharacter_(ord(chars[1]))
-        print("chars", chars, glyph1, glyph2)
+        #print("chars", chars, glyph1, glyph2)
         masterId = self.f.masters[0].id
         kerning = self.f.kerningForFontMasterID_firstGlyph_secondGlyph_direction_(masterId, glyph1, glyph2, 0)
         if kerning < 100000:
@@ -672,9 +670,9 @@ class WordomatWindow:
             "matchPattern": self.matchPattern, # non compiled string
             "markColor": markColorPref,
             }
-        for key, value in extDefaults.iteritems():
+        for key, value in extDefaults.items():
             setExtensionDefault("com.ninastoessinger.word-o-mat."+key, value)
-                
+        
         # go make words
         if self.checkInput(self.limitToCharset, self.fontChars, self.customCharset, self.requiredLetters, self.minLength, self.maxLength, self.case) == True:
         
