@@ -367,14 +367,14 @@ class WordomatWindow:
         
         result2 = []
         for c in result1:
-            if len(c)>1: # glyph names
+            if len(c) > 1: # glyph names
                 if self.f is not None:
                     g = self.f.glyphs[c]
                     if g:
                         try:
                             try:
                                 # GLYPHS 3
-                                value = unicode(chr(int(g.unicode, 16)))
+                                value = chr(g.unicodeChar())
                             except:
                                 # GLYPHS 2
                                 value = unicode(unichr(int(g.unicode, 16)))
@@ -598,7 +598,7 @@ class WordomatWindow:
                             try: 
                                 try:
                                     # GLYPHS 3
-                                    self.customCharset.append(chr(int(g.unicode, 16)))
+                                    self.customCharset.append(chr(g.unicodeChar()))
                                 except:
                                     # GLYPHS 2
                                     self.customCharset.append(unichr(int(g.unicode, 16)))
