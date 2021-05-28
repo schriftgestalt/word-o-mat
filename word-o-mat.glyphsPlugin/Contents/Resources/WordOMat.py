@@ -19,7 +19,8 @@ import webbrowser
 
 
 from lib import * 
-from vanilla.dialogs import getFile
+# from vanilla.dialogs import getFile # open dialog from the vanilla version used in Glyphs 2 is not working in 10.15 (and above) any more. So if we drop Glyphs 2 support, this can be reverted
+from GlyphsApp import GetOpenFile
 from vanilla import * 
 
 from random import choice
@@ -321,7 +322,8 @@ class WordomatWindow:
         customIndex = len(self.textfiles) + 2
         if sender.get() == customIndex: # Custom word list
             try:
-                filePath = getFile(title="Load custom word list", messageText="Select a text file with words on separate lines", fileTypes=["txt"])[0]
+                #filePath = getFile(title="Load custom word list", messageText="Select a text file with words on separate lines", fileTypes=["txt"])[0] # open dialog from the vanilla version used in Glyphs 2 is not working in 10.15 (and above) any more. So if we drop Glyphs 2 support, this
+                filePath = GetOpenFile(message="Load custom word list. Select a text file with words on separate lines", filetypes=["txt"])
             except TypeError:
                 filePath = None
                 self.customWords = []
