@@ -9,7 +9,7 @@ from Foundation import NSBundle, NSObject, NSUserDefaults
 from AppKit import NSApplication, NSMenuItem
 from vanilla import * 
 
-from GlyphsApp import Glyphs, Message
+from GlyphsApp import Glyphs, Message, python_method
 
 
 __all__ = ["CurrentFont", "Message", "registerExtensionDefaults", "getExtensionDefault", "setExtensionDefault", "ExtensionBundle", "addObserver", "removeObserver", "AccordionView", "OpenSpaceCenter"]
@@ -36,7 +36,7 @@ def ExtensionBundle(title):
 
 def getResourceFilePath(self, filename):
 	return self.pathForResource_ofType_(filename, "txt")
-NSBundle.getResourceFilePath = getResourceFilePath
+NSBundle.getResourceFilePath = python_method(getResourceFilePath)
 
 def addObserver(a, b, c):
 	pass
@@ -76,5 +76,5 @@ def OpenSpaceCenter(font):
 def __setRaw__(self, text):
 	self.graphicView().setDisplayString_(text)
 GSEditViewController = objc.lookUpClass("GSEditViewController")
-GSEditViewController.setRaw = __setRaw__
+GSEditViewController.setRaw = python_method(__setRaw__)
 
