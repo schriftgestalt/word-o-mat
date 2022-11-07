@@ -1,3 +1,20 @@
+Prepared for word-o-mat by David Jones
+from a shonky corpus of words used on the popular pages of
+cy.wikipedia.org.
+https://gitlab.com/drj11/wikicorp/-/tree/main/cy-wiki-500-2021
+
+From the 500 most viewed pages of cy.wikipedia.org for each of
+the years 2017 through to 2021, i extract the words, then
+filter them here to a list of words that appear 12 or more times.
+Which leaves about 8,000 words.
+
+I'm well aware that not all of these are Welsh words, but they
+are words used by Welsh users.
+
+Licensed under Creative Commons – Attribution 3.0 license 
+https://creativecommons.org/licenses/by/4.0/
+
+*****
 10fed
 ABC
 Abkhazia
