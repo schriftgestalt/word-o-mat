@@ -14,6 +14,7 @@ update to version 2.2.5, 19.12.2017
 from __future__ import print_function
 
 import codecs
+import random
 import re
 import webbrowser
 
@@ -75,7 +76,8 @@ class WordomatWindow:
         self.g1.source.set(int(self.source))
                 
         # case selection
-        caseList = [u"don’t change case", "make lowercase", "Capitalize", "ALL CAPS"]
+        ransom_note = ransom("ransom note")
+        caseList = [u"don’t change case", "make lowercase", "Capitalize", "ALL CAPS", ransom_note]
         self.g1.case = PopUpButton((87, 32, -0, 20), caseList, sizeStyle="small")
         self.g1.case.set(self.case)
         
@@ -714,6 +716,9 @@ class WordomatWindow:
                             w2 = w.replace(u"ß", "ss")
                             w = w2
                         w = w.upper()
+                    elif self.case == 4:
+                        # RaNsom notE
+                        w = ransom(w)
                         
                     if checker.checkWord(w, self.outputWords):
                         self.outputWords.append(w)  
@@ -749,3 +754,18 @@ class WordomatWindow:
         """Remove observers when the extension window is closed."""
         removeObserver(self, "fontDidOpen")
         removeObserver(self, "fontWillClose")
+
+
+def ransom(s):
+    """Randomly convert the case in the string s so that
+    it looks like a ransom note.
+    """
+
+    def flip(c):
+        if random.random() < 0.5:
+            return c.lower()
+        else:
+            return c.upper()
+    return "".join(flip(c) for c in s)
+
+
