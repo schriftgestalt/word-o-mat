@@ -47,7 +47,10 @@ class WordOMat(GeneralPlugin):
 	
 	@objc.python_method
 	def start(self):
-		newMenuItem = NSMenuItem(self.name, self.showWindow_)
+		if Glyphs.buildNumber >= 3311:
+			newMenuItem = NSMenuItem(self.name, callback=self.showWindow_, target=self)
+		else:
+			newMenuItem = NSMenuItem(self.name, self.showWindow_)
 		Glyphs.menu[EDIT_MENU].append(newMenuItem)
 	
 	def showWindow_(self, sender):
