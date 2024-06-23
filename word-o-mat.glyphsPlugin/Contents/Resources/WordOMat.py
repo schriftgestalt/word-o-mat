@@ -43,7 +43,7 @@ class WordomatWindow:
         
         # The rest of this method is just building the window / interface
         
-        self.w = Window((250, 414), 'word-o-mat', minSize=(250,111), maxSize=(250,436))
+        self.w = Window((250, 406), 'word-o-mat')
         padd, bPadd = 12, 3
         groupW = 250 - 2*padd
         
