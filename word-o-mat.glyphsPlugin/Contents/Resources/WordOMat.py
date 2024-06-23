@@ -375,15 +375,10 @@ class WordomatWindow:
                 if self.f is not None:
                     g = self.f.glyphs[c]
                     if g:
-                        try:
-                            try:
-                                # GLYPHS 3
-                                value = chr(g.unicodeChar())
-                            except:
-                                # GLYPHS 2
-                                value = unicode(unichr(int(g.unicode, 16)))
-                            result2.append(value)
-                        except TypeError: # unicode not set
+                        value = g.unicodeChar()
+                        if value > 0:
+                            result2.append(chr(value))
+                        else: # unicode not set
                             Message(title="word-o-mat", message="Glyph \"%s\" was found, but does not appear to have a Unicode value set. It can therefore not be processed, and will be skipped." % c)
                     else:
                         Message(title="word-o-mat", message="Conflict: Character \"%s\" was specified as required, but not found. It will be skipped." % c)
