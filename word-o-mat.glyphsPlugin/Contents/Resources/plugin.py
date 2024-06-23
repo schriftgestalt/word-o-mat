@@ -13,10 +13,14 @@ from __future__ import print_function, unicode_literals
 #
 ###########################################################################################################
 
-from GlyphsApp import *
-from GlyphsApp.plugins import *
-import traceback, sys, objc
+import traceback
+import sys
+import objc
 from Foundation import NSString, NSLog
+from AppKit import NSMenuItem
+from GlyphsApp import Glyphs, EDIT_MENU
+from GlyphsApp.plugins import GeneralPlugin
+
 hasAllModules = True
 try:
 	NSLog("__import 1")
