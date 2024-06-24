@@ -44,26 +44,26 @@ class WordomatWindow:
 
         # The rest of this method is just building the window / interface
 
-        self.w = Window((250, 406), 'word-o-mat')
+        self.w = Window((250, 400), 'word-o-mat')
         padd, bPadd = 12, 3
         groupW = 250 - 2 * padd
 
         # Panel 1 - Basic Settings
-        self.g1 = Group((padd, 8, groupW, 104))
+        self.g1 = Group((padd, 8, groupW, 98))
 
         topLineFields = {
-            "wordCount": [0, self.wordCount, 20],
-            "minLength": [108, self.minLength, 3],
-            "maxLength": [145, self.maxLength, 10],
+            "wordCount": [0, 32, self.wordCount, 20],
+            "minLength": [110, 28, self.minLength, 3],
+            "maxLength": [147, 28, self.maxLength, 10],
         }
         topLineLabels = {
-            "wcText": [31, 78, 'words with', 'left'],
-            "lenTextTwo": [133, 10, u'–', 'center'],
-            "lenTextThree": [176, -0, 'letters', 'left'],
+            "wcText": [35, 78, 'words with', 'left'],
+            "lenTextTwo": [135, 15, u'–', 'center'],
+            "lenTextThree": [178, -0, 'letters', 'left'],
         }
 
         for label, values in topLineFields.items():
-            setattr(self.g1, label, EditText((values[0], 0, 28, 22), text=values[1], placeholder=str(values[2])))
+            setattr(self.g1, label, EditText((values[0], 0, values[1], 22), text=values[2], placeholder=str(values[3])))
 
         for label, values in topLineLabels.items():
             setattr(self.g1, label, TextBox((values[0], 3, values[1], 22), text=values[2], alignment=values[3]))
@@ -71,14 +71,14 @@ class WordomatWindow:
         # language selection
         languageOptions = list(self.languageNames)
         languageOptions.extend(["OSX Dictionary", "Any language", "Custom wordlist..."])
-        self.g1.source = PopUpButton((0, 32, 85, 20), [], sizeStyle="small", callback=self.changeSourceCallback)
+        self.g1.source = PopUpButton((0, 31, 85, 22), [], callback=self.changeSourceCallback)
         self.g1.source.setItems(languageOptions)
         self.g1.source.set(int(self.source))
 
         # case selection
         ransom_note = ransom("ransom note")
-        caseList = [u"don’t change case", "make lowercase", "Capitalize", "ALL CAPS", ransom_note]
-        self.g1.case = PopUpButton((87, 32, -0, 20), caseList, sizeStyle="small")
+        caseList = ["Keep case", "make lowercase", "Capitalize", "ALL CAPS", ransom_note]
+        self.g1.case = PopUpButton((87, 31, -0, 22), caseList)
         self.g1.case.set(self.case)
 
         # character set
@@ -88,7 +88,7 @@ class WordomatWindow:
             "Use only selected glyphs",
             # "Use only glyphs with mark color:"
         ]
-        self.g1.base = PopUpButton((0, 61, -0, 20), charsetList, callback=self.baseChangeCallback, sizeStyle="small")
+        self.g1.base = PopUpButton((0, 59, -0, 20), charsetList, callback=self.baseChangeCallback)
         if not CurrentFont():
             self.g1.base.set(0)    # Use any
             self.g1.base.enable(False)  # Disable selection
@@ -120,7 +120,7 @@ class WordomatWindow:
             dict(width=40, title="Text", enabled=True),
             dict(width=120, title="GREP pattern match", enabled=True)
         ]
-        self.g2.matchMode = SegmentedButton((50, 5, -0, 20), matchBtnItems, callback=self.switchMatchModeCallback, sizeStyle="small")
+        self.g2.matchMode = SegmentedButton((40, 4, -0, 20), matchBtnItems, callback=self.switchMatchModeCallback, sizeStyle="small")
         rePanelOn = 1 if self.matchMode == "grep" else 0
         self.g2.matchMode.set(rePanelOn)
 
@@ -133,11 +133,11 @@ class WordomatWindow:
             setattr(self.g2.textMode, "reqLabel%s" % i, TextBox((bPadd, labelY[i], -bPadd, 22), labelText[i], sizeStyle="small"))
         self.g2.textMode.mustLettersBox = EditText((bPadd + 2, 18, -bPadd, 19), text=", ".join(self.requiredLetters), sizeStyle="small")
         # consider using a subclass that allows copy-pasting of glyphs to glyphnames
-        y2 = 37
+        y2 = 36
         attrNameTemplate = "group%sbox"
         for i in range(3):
             j = i + 1
-            y2 += 20
+            y2 += 21
             optionsList = ["%s: %s" % (key, ", ".join(value)) for key, value in self.groupPresets]
             if len(self.requiredGroups[i]) > 0 and self.requiredGroups[i][0] != "":
                 optionsList.insert(0, "Recent: " + ", ".join(self.requiredGroups[i]))
@@ -164,21 +164,19 @@ class WordomatWindow:
 
         # Panel 3 - Options
         self.g3 = Group((padd, 5, groupW, 48))
-        self.g3.checkbox0 = CheckBox((bPadd, 2, 18, 18), "", sizeStyle="small", value=self.banRepetitions)
-        self.g3.checkLabel = TextBox((18, 4, -bPadd, 18), "No repeating characters per word", sizeStyle="small")
-        self.g3.listOutput = CheckBox((bPadd, 18, 18, 18), "", sizeStyle="small")
-        self.g3.listLabel = TextBox((18, 20, -bPadd, 18), "Output as list sorted by width", sizeStyle="small")
+        self.g3.checkbox0 = CheckBox((bPadd, 0, -bPadd, 18), "No repeating characters per word", sizeStyle="small", value=self.banRepetitions)
+        self.g3.listOutput = CheckBox((bPadd, 20, -bPadd, 18), "Output as list sorted by width", sizeStyle="small")
 
         # Display Accordion View
         accItems = [
-            dict(label="Basic settings", view=self.g1, size=104, collapsed=False, canResize=False),
+            dict(label="Basic settings", view=self.g1, size=98, collapsed=False, canResize=False),
             dict(label="Specify required letters", view=self.g2, size=173, collapsed=False, canResize=False),
             dict(label="Options", view=self.g3, size=48, collapsed=False, canResize=False)
         ]
         self.w.panel1 = Group((0, 0, 250, -35))
         self.w.panel1.accView = AccordionView((0, 0, -0, -0), accItems)
 
-        self.w.submit = Button((padd, -30, -padd, 22), 'make words!', callback=self.makeWords)
+        self.w.submit = Button((padd, -32, -padd, 22), 'make words!', callback=self.makeWords)
 
         self.w.bind("close", self.windowClose)
         self.w.setDefaultButton(self.w.submit)

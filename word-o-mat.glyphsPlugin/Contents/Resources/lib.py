@@ -71,7 +71,7 @@ class AccordionView(Group):
 				y += 2
 			label = TextBox((padd, y, -padd, 22), accItem["label"], sizeStyle="small")
 			setattr(self, "title%d" % idx, label)
-			y += 16
+			y += 14
 			height = accItem["size"]
 			panel = Group((0, y, 250, height))
 			setattr(self, "panel%d" % idx, panel)
