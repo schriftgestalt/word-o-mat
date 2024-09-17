@@ -44,12 +44,12 @@ class WordomatWindow:
 
         # The rest of this method is just building the window / interface
 
-        self.w = Window((250, 400), 'word-o-mat')
+        self.w = Window((250, 391), 'word-o-mat')
         padd, bPadd = 12, 3
         groupW = 250 - 2 * padd
 
         # Panel 1 - Basic Settings
-        self.g1 = Group((padd, 8, groupW, 98))
+        self.g1 = Group((padd, 8, groupW, 96))
 
         topLineFields = {
             "wordCount": [0, 32, self.wordCount, 20],
@@ -71,14 +71,14 @@ class WordomatWindow:
         # language selection
         languageOptions = list(self.languageNames)
         languageOptions.extend(["OSX Dictionary", "Any language", "Custom wordlist..."])
-        self.g1.source = PopUpButton((0, 31, 85, 22), [], callback=self.changeSourceCallback)
+        self.g1.source = PopUpButton((0, 29, 111, 20), [], callback=self.changeSourceCallback, sizeStyle="small")
         self.g1.source.setItems(languageOptions)
         self.g1.source.set(int(self.source))
 
         # case selection
         ransom_note = ransom("ransom note")
         caseList = ["Keep case", "make lowercase", "Capitalize", "ALL CAPS", ransom_note]
-        self.g1.case = PopUpButton((87, 31, -0, 22), caseList)
+        self.g1.case = PopUpButton((115, 29, -0, 20), caseList, sizeStyle="small")
         self.g1.case.set(self.case)
 
         # character set
@@ -88,7 +88,7 @@ class WordomatWindow:
             "Use only selected glyphs",
             # "Use only glyphs with mark color:"
         ]
-        self.g1.base = PopUpButton((0, 59, -0, 20), charsetList, callback=self.baseChangeCallback)
+        self.g1.base = PopUpButton((0, 53, -0, 20), charsetList, callback=self.baseChangeCallback, sizeStyle="small")
         if not CurrentFont():
             self.g1.base.set(0)    # Use any
             self.g1.base.enable(False)  # Disable selection
@@ -169,7 +169,7 @@ class WordomatWindow:
 
         # Display Accordion View
         accItems = [
-            dict(label="Basic settings", view=self.g1, size=98, collapsed=False, canResize=False),
+            dict(label="Basic settings", view=self.g1, size=89, collapsed=False, canResize=False),
             dict(label="Specify required letters", view=self.g2, size=173, collapsed=False, canResize=False),
             dict(label="Options", view=self.g3, size=48, collapsed=False, canResize=False)
         ]
