@@ -19,7 +19,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright 2017 by Nina Stössinger</string>
 	<key>NSPrincipalClass</key>
-	<string>WordOMat</string>
+	<string>WordOMatPlugin</string>
 	<key>productReleaseNotes</key>
 	<string>Glyphs 3, Python 3, M1 compatibility</string>
 </dict>

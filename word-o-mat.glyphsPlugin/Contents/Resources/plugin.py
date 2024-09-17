@@ -14,37 +14,36 @@ from __future__ import print_function, unicode_literals
 ###########################################################################################################
 
 import traceback
-import sys
 import objc
-from Foundation import NSString, NSLog
+from Foundation import NSLog
 from AppKit import NSMenuItem
-from GlyphsApp import Glyphs, EDIT_MENU
+from GlyphsApp import Glyphs, EDIT_MENU, Message
 from GlyphsApp.plugins import GeneralPlugin
 
 hasAllModules = True
 try:
-	NSLog("__import 1")
-	from vanilla import * 
-	NSLog("__import 2")
-	import WordOMat
-	NSLog("__import 3")
+	# NSLog("__import 1")
+	import vanilla  # noqa: F401
+	# NSLog("__import 2")
+	import WordOMat  # noqa: F401
+	# NSLog("__import 3")
 	from WordOMat import WordomatWindow
-	NSLog("__import 4")
+	# NSLog("__import 4")
 except:
-	import traceback
 	NSLog(traceback.format_exc())
 	hasAllModules = False
 	NSLog("Exception in word-o-mat import:")
-	print('-'*60)
+	print('-' * 60)
 	#traceback.print_exc(file=sys.stdout)
-	print('-'*60)
+	print('-' * 60)
 
-class WordOMat(GeneralPlugin):
+
+class WordOMatPlugin(GeneralPlugin):
 	@objc.python_method
 	def settings(self):
-		self.name = u"word-o-mat"
+		self.name = "word-o-mat"
 		self.wordomat = None
-	
+
 	@objc.python_method
 	def start(self):
 		if Glyphs.buildNumber >= 3311:
@@ -52,7 +51,7 @@ class WordOMat(GeneralPlugin):
 		else:
 			newMenuItem = NSMenuItem(self.name, self.showWindow_)
 		Glyphs.menu[EDIT_MENU].append(newMenuItem)
-	
+
 	def showWindow_(self, sender):
 		""" Do something like show a window"""
 		if not hasAllModules:
@@ -62,7 +61,7 @@ class WordOMat(GeneralPlugin):
 			self.wordomat = WordomatWindow()
 		else:
 			self.wordomat.w.show()
-	
+
 	@objc.python_method
 	def __file__(self):
 		"""Please leave this method unchanged"""

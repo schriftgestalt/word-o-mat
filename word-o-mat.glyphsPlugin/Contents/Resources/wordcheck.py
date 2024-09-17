@@ -1,9 +1,7 @@
-import codecs
-import re
 
 class wordChecker(object):
     """Checks lists of words against a number of specified requirements.
-    
+
     Attributes:
     limitToCharset (Bool):  Signals whether output is constrained to a limited character set.
     fontChars (list):       List of characters available in current font.
@@ -15,21 +13,21 @@ class wordChecker(object):
     minLength (int):        Minimal word length (inclusive).
     maxLength (int):        Maximal word length (inclusive).
     matchMode (string):     Match mode to be used ("text" or "grep").
-    
+
     ##### Note for future development: ideally only *either* matchPattern or required* should be required depending on the matchMode chosen; it makes no sense to pass the other stuff into this function too.
     """
-    
+
     def __init__(self, limitToCharset, fontChars, customCharset, requiredLetters, requiredGroups, matchPattern, banRepetitions, minLength, maxLength, matchMode="text"):
         self.limitToCharset = limitToCharset
         self.fontChars = fontChars
         self.customCharset = customCharset
-        self.bannedLetters = [" "] # spaces are banned inside words
+        self.bannedLetters = [" "]  # spaces are banned inside words
 
         self.matchMode = matchMode
         if self.matchMode == "text":
             self.requiredLetters = requiredLetters
             self.requiredGroups = requiredGroups
-        else: #grep
+        else:  # grep
             self.matchPatternRE = matchPattern
         self.banRepetitions = banRepetitions
         self.minLength = minLength
@@ -37,7 +35,7 @@ class wordChecker(object):
 
     def _excludedAll(self, word, charList):
         """Check that no banned letter occurs in a given word.
-        
+
         Can this be retired?"""
         for c in charList:
             if c in word:
@@ -47,7 +45,7 @@ class wordChecker(object):
     def _includedAll(self, word, charList):
         """Check that all required letters occur in a given word."""
         for c in charList:
-            if not c in word:
+            if c not in word:
                 return False
         return True
 
@@ -76,7 +74,7 @@ class wordChecker(object):
             useList = charList
         if condition:
             for c in word:
-                if not c in useList:
+                if c not in useList:
                     return False
             return True
         else:
@@ -100,7 +98,7 @@ class wordChecker(object):
 
     def _checkExisting(self, word, outputList):
         """Check that a given word has not already been found and listed for output."""
-        return not word in outputList
+        return word not in outputList
 
     def _matchRE(self, word):
         """Check that a given word matches the supplied regular expression."""
@@ -115,7 +113,7 @@ class wordChecker(object):
 
         # Compile the applicable requirements
         requirements = [
-            (self._checkExisting, [outputWords]),    
+            (self._checkExisting, [outputWords]),
             (self._limitedTo, [self.fontChars, self.customCharset, self.limitToCharset]),
             (self._checkLength, []),
             (self._excludedAll, [self.bannedLetters]),
@@ -126,11 +124,11 @@ class wordChecker(object):
                 (self._includedAll, [self.requiredLetters]),
                 (self._includedGroups, [self.requiredGroups]),
             ])
-        else: # grep
+        else:  # grep
             requirements.extend([
                 (self._matchRE, []),
             ])
-        
+
         # Run the word through all the requirements and see if it fails
         for reqFunc, args in requirements:
             if not reqFunc(word, *args):
