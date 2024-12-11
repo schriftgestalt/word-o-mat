@@ -6,7 +6,6 @@ Some missing API
 
 import objc
 from Foundation import NSBundle, NSUserDefaults
-# from AppKit import NSApplication, NSMenuItem
 from vanilla import Group, TextBox, HorizontalLine
 
 from GlyphsApp import Glyphs, Message, python_method
