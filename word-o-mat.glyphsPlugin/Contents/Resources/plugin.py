@@ -46,7 +46,10 @@ class WordOMatPlugin(GeneralPlugin):
 
 	@objc.python_method
 	def start(self):
-		if Glyphs.buildNumber >= 3311:
+		if Glyphs.buildNumber >= 3320:
+			from GlyphsApp.UI import MenuItem
+			newMenuItem = MenuItem(self.name, action=self.showWindow_, target=self)
+		elif Glyphs.buildNumber >= 3311:
 			newMenuItem = NSMenuItem(self.name, callback=self.showWindow_, target=self)
 		else:
 			newMenuItem = NSMenuItem(self.name, self.showWindow_)
