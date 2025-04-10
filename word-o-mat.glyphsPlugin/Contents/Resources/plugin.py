@@ -49,10 +49,10 @@ class WordOMatPlugin(GeneralPlugin):
 		if Glyphs.buildNumber >= 3320:
 			from GlyphsApp.UI import MenuItem
 			newMenuItem = MenuItem(self.name, action=self.showWindow_, target=self)
-		elif Glyphs.buildNumber >= 3311:
-			newMenuItem = NSMenuItem(self.name, callback=self.showWindow_, target=self)
 		else:
-			newMenuItem = NSMenuItem(self.name, self.showWindow_)
+			newMenuItem = NSMenuItem.alloc().initWithTitle_action_keyEquivalent_(self.name, self.showWindow_, "")
+			newMenuItem.setTarget_(self)
+
 		Glyphs.menu[EDIT_MENU].append(newMenuItem)
 
 	def showWindow_(self, sender):
